@@ -17,6 +17,13 @@ class Question
         data.map { |datum| Question.new(datum)}
     end
 
+    def initialize(options)
+        @id= options['id']
+        @title=options['title']
+        @body=options['body']
+        @author_id=options['author_id']
+    end
+
     def find_by_id(num)
         quest=QuestionsDatabase.instance.execute("select * FROM questions Where id = ?",num)
         Question.new(quest)
@@ -34,6 +41,13 @@ class User
         data.map { |datum| Users.new(datum)}
     end
 
+    def initialize(options)
+        @id= options['id']
+        @fname= options['fname']
+        @lname= options['lname']
+    end
+
+
     def find_by_name(str1,str2)
         name=QuestionsDatabase.instance.execute("select * FROM user Where fname = ? and lname = ?",str1,str2)
         User.new(name)
@@ -49,6 +63,13 @@ class QuestionFollows
         data.map { |datum| QuestionFollows.new(datum)}
     end
 
+    def initialize(options)
+        @id= options['id']
+        @questions_follows = options['questions_follows']
+        @user_q_follows = options['user_q_follows']
+    end
+
+
     def find_by_id(num)
         follows=QuestionsDatabase.instance.execute("select * FROM questions_follows Where id = ?",num)
         QuestionFollows.new(follows)
@@ -62,6 +83,15 @@ class Replies
         data.map { |datum| QuestionFollows.new(datum)}
     end
 
+    def initialize(options)
+        @id= options['id']
+        @body= options['body']
+        @reply_Q = options['reply_Q']
+        @reply_OWN = options['reply_OWN']
+        @reply_PAR = options['reply_PAR']
+    end
+
+
     def find_by_id(num)
         replies=QuestionsDatabase.instance.execute("select * FROM replies Where id = ?",num)
         QuestionFollows.new(replies)
@@ -72,6 +102,16 @@ class Replies
         QuestionFollows.new(replies)
     end
 
+    def find_by_parent(quest_id)
+        replies=QuestionsDatabase.instance.execute("select * FROM replies Where reply_PAR = ?",quest_id)
+        QuestionFollows.new(replies)
+    end
+
+    def find_by_owner(quest_id)
+        replies=QuestionsDatabase.instance.execute("select * FROM replies Where reply_OWN = ?",quest_id)
+        QuestionFollows.new(replies)
+    end
+
 end
 
 class QuestionLikes
@@ -79,6 +119,14 @@ class QuestionLikes
         data = QuestionsDatabase.instance.execute("SELECT * FROM question_likes")
         data.map { |datum| QuestionFollows.new(datum)}
     end
+
+    def initialize(options)
+        @id= options['id']
+        @user_like= options['user_like']
+        @user = options['user']
+        @question = options['question']
+    end
+
 
     def find_by_id(num)
         likes=QuestionsDatabase.instance.execute("select * FROM question_likes Where id = ?",num)

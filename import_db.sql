@@ -17,7 +17,7 @@ CREATE TABLE questions (
 
 CREATE TABLE question_follows (
     
-    list INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     question_follows INTEGER,
     user_q_follows INTEGER,
     
@@ -38,6 +38,7 @@ CREATE TABLE replies (
     FOREIGN KEY (reply_PAR) REFERENCES replies(id));
 
 CREATE TABLE question_likes (
+    id INTEGER PRIMARY KEY,
     user_like BOOLEAN,
     user INTEGER NOT NULL,
     question INTEGER NOT NULL,

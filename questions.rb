@@ -22,6 +22,10 @@ class Question
         Question.new(quest)
     end
 
+    def find_by_user(user_id)
+        name=QuestionsDatabase.instance.execute("select * FROM questions Where author_id = ?",user_id)
+        Question.new(name)
+    end
 end
 
 class User
@@ -34,6 +38,8 @@ class User
         name=QuestionsDatabase.instance.execute("select * FROM user Where fname = ? and lname = ?",str1,str2)
         User.new(name)
     end
+
+
 
 end
 
@@ -57,12 +63,35 @@ class Replies
     end
 
     def find_by_id(num)
-        replies=QuestionsDatabase.instance.execute("select * FROM questions_follows Where id = ?",num)
+        replies=QuestionsDatabase.instance.execute("select * FROM replies Where id = ?",num)
+        QuestionFollows.new(replies)
+    end
+
+    def find_by_questioin(quest_id)
+        replies=QuestionsDatabase.instance.execute("select * FROM replies Where reply_Q = ?",quest_id)
         QuestionFollows.new(replies)
     end
 
 end
 
 class QuestionLikes
+    def self.all
+        data = QuestionsDatabase.instance.execute("SELECT * FROM question_likes")
+        data.map { |datum| QuestionFollows.new(datum)}
+    end
 
+    def find_by_id(num)
+        likes=QuestionsDatabase.instance.execute("select * FROM question_likes Where id = ?",num)
+        QuestionFollows.new(likes)
+    end
+
+    def find_by_questioin(quest_id)
+        likes=QuestionsDatabase.instance.execute("select * FROM question_likes Where question = ?",quest_id)
+        QuestionFollows.new(likes)
+    end
+
+    def find_by_user(user_id)
+        likes=QuestionsDatabase.instance.execute("select * FROM question_likes Where user = ?",user_id)
+        QuestionFollows.new(likes)
+    end
 end

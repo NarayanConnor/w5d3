@@ -12,6 +12,9 @@ class QuestionsDatabase < SQLite3::Database
 end
 
 class Question
+
+    attr_accessor :id, :title, :body, :author_id
+
     def self.all
         data = QuestionsDatabase.instance.execute("SELECT * FROM questions")
         data.map { |datum| Question.new(datum)}
@@ -33,9 +36,20 @@ class Question
         name=QuestionsDatabase.instance.execute("select * FROM questions Where author_id = ?",user_id)
         Question.new(name)
     end
+
+    def author
+        QuestionsDatabase.instance.execute("SELECT fname, lname FROM users where id = ?",self.author_id)
+    end
+
+    def replies
+        Replies.find_by_id(self.id)
+    end
 end
 
 class User
+
+    attr_accessor :id, :fname, :lname
+
     def self.all
         data = QuestionsDatabase.instance.execute("SELECT * FROM users")
         data.map { |datum| Users.new(datum)}
@@ -53,11 +67,17 @@ class User
         User.new(name)
     end
 
+    def authored_questions
+        Question.find_by_owner(self.id)
+    end
 
 
 end
 
 class QuestionFollows
+
+    attr_accessor :id, :questions_follows, :user_q_follows
+
     def self.all
         data = QuestionsDatabase.instance.execute("SELECT * FROM questions_follows")
         data.map { |datum| QuestionFollows.new(datum)}
@@ -71,13 +91,16 @@ class QuestionFollows
 
 
     def find_by_id(num)
-        follows=QuestionsDatabase.instance.execute("select * FROM questions_follows Where id = ?",num)
+        follows=QuestionsDatabase.instance.execute("select * FROM questions_follows Where id = ?",num.)
         QuestionFollows.new(follows)
     end
 
 end
 
 class Replies
+
+    attr_accessor :id, :body, :reply_Q, :reply_PAR, :reply_OWN
+
     def self.all
         data = QuestionsDatabase.instance.execute("SELECT * FROM replies")
         data.map { |datum| QuestionFollows.new(datum)}
@@ -90,6 +113,7 @@ class Replies
         @reply_OWN = options['reply_OWN']
         @reply_PAR = options['reply_PAR']
     end
+
 
 
     def find_by_id(num)
@@ -112,9 +136,13 @@ class Replies
         QuestionFollows.new(replies)
     end
 
+
 end
 
 class QuestionLikes
+
+    attr_accessor :id, :user_like, :user, :question
+
     def self.all
         data = QuestionsDatabase.instance.execute("SELECT * FROM question_likes")
         data.map { |datum| QuestionFollows.new(datum)}

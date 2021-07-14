@@ -95,6 +95,21 @@ class QuestionFollows
         QuestionFollows.new(follows)
     end
 
+    def followers_for_question_id(quest_id)
+        QuestionsDatabase.instance.execute(<<-SQL, quest_id)
+            SELECT 
+                user*
+            FROM
+                users
+            JOIN 
+                questions_follows
+            ON
+                user.id=question.author_id
+            where 
+                user.id=question.author_id
+            
+    end
+
 end
 
 class Replies

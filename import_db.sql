@@ -4,31 +4,27 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
     fname TEXT NOT NULL,
-    lname TEXT NOT NULL,
-);
+    lname TEXT NOT NULL);
 
 CREATE TABLE questions (
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
-    author_id INTEGER NOT NULL
+    author_id INTEGER NOT NULL,
 
-    FOREIGN KEY  (author_id) REFERENCES users(id)
-);
+    FOREIGN KEY (author_id) REFERENCES users(id));
 
 
 CREATE TABLE question_follows (
     
-    list INTEGER PRIMARY KEY
-    --question_follows INTEGER
-    user_q_follows INTEGER
+    list INTEGER PRIMARY KEY,
+    question_follows INTEGER,
+    user_q_follows INTEGER,
     
 
 
-    --FOREIGN KEY (question_follows) REFERENCES users(id)
-    FOREIGN KEY (user_q_follows) REFERENCES questions(id)
-
-);
+    FOREIGN KEY (question_follows) REFERENCES users(id),
+    FOREIGN KEY (user_q_follows) REFERENCES questions(id));
 
 CREATE TABLE replies (
     id INTEGER PRIMARY KEY,
@@ -37,39 +33,45 @@ CREATE TABLE replies (
     reply_PAR INTEGER ,
     body TEXT NOT NULL,
 
-    FOREIGN KEY (reply_Q) REFERENCES questions(id)
-    FOREIGN KEY (reply_OWN) REFERENCES users(id)
-    FOREIGN KEY (reply_PAR) REFERENCES replies(id)
-);
+    FOREIGN KEY (reply_Q) REFERENCES questions(id),
+    FOREIGN KEY (reply_OWN) REFERENCES users(id),
+    FOREIGN KEY (reply_PAR) REFERENCES replies(id));
 
 CREATE TABLE question_likes (
     user_like BOOLEAN,
     user INTEGER NOT NULL,
     question INTEGER NOT NULL,
 
-    FOREIGN KEY (user) REFERENCES questions(id)
-    FOREIGN KEY (question) REFERENCES users(id)
-
-);
+    FOREIGN KEY (user) REFERENCES questions(id),
+    FOREIGN KEY (question) REFERENCES users(id));
 
 
 
 INSERT INTO 
-    users (fname,lname)
+    users(fname,lname)
 VALUES
-    ('Mace','Windu')
+    ('Mace','Windu'),
     ('Obiwan','Kenobi'),
     ('Darth','Vader');
 
 INSERT INTO
-    questions (title,body,author_id)
+    questions(title,body,author_id)
 VALUES
     ('Batlle tactics on mustafar','Did you know i had the high ground?', (SELECT id FROM users WHERE fname = 'Obiwan' AND lname = 'Kenobi'));
 
 INSERT INTO
-    question_follows(user_q_follows)
+    question_follows(question_follows,user_q_follows)
 VALUES
-    ((SELECT id FROM users WHERE fname = 'Obiwan' AND lname = 'Kenobi')),
-    ((SELECT id FROM users WHERE fname = 'Darth' AND lname = 'Vader')),
-    ((SELECT id FROM users WHERE fname = 'Mace' AND lname = 'Windu')),
+    ((SELECT id FROM users WHERE fname = 'Obiwan' AND lname = 'Kenobi'),(SELECT id FROM questions WHERE title LIKE ('%mustafar'))),
+    ((SELECT id FROM users WHERE fname = 'Darth' AND lname = 'Vader'),(SELECT id FROM questions WHERE title LIKE ('%mustafar'))),
+    ((SELECT id FROM users WHERE fname = 'Mace' AND lname = 'Windu'),(SELECT id FROM questions WHERE title LIKE ('%mustafar')));
 
+INSERT INTO
+    replies(reply_Q,reply_OWN,body)
+VALUES
+    ((SELECT id FROM questions WHERE title LIKE ('%mustafar')),(SELECT id FROM users WHERE fname = 'Darth' AND lname = 'Vader'),'I didn''t think something so small as the high ground would matter when were almighty space wizards');
+
+INSERT INTO 
+    question_likes(user_like,user,question)
+VALUES
+    (TRUE,(SELECT id FROM users WHERE fname = 'Mace' AND lname = 'Windu'),(SELECT id FROM questions WHERE title LIKE ('%mustafar')));

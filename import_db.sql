@@ -11,13 +11,22 @@ CREATE TABLE questions (
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
+    author_id INTEGER NOT NULL
 
-    FOREIGN KEY  (author)
-)
+    FOREIGN KEY  (author_id) REFERENCES users(id)
+);
 
 
 CREATE TABLE question_follows (
     
+    list INTEGER PRIMARY KEY
+    question_follows INTEGER
+    user_q_folloes INTEGER
+    
 
 
-)
+    FOREIGN KEY question_follows REFERENCES users(id)
+    FOREIGN KEY user_q_folloes REFERENCES questions(id)
+
+);
+
